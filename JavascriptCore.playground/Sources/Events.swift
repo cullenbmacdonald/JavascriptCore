@@ -1,22 +1,22 @@
 import JavaScriptCore
 
-// NOTE! JSManagedValues are a thing
-public typealias EventHandler = [String: [JSValue]]
+public typealias EventHandlers = [String: [JSValue]]
 
-@objc public protocol EventDispatchJSExport: JSExport {
-    var events: [Int: EventHandler] { get set }
+@objc public protocol EventsJSExport: JSExport {
+///    var events: [Int: EventHandler] { get set }
     func on(_ obj: AnyObject, _ event: String, _ handler: JSValue)
     func trigger(_ obj: AnyObject, _ event: String)
 }
 
-@objc public class EventDispatch: NSObject, EventDispatchJSExport {
 
-    public var events = [Int: EventHandler]()
+@objc public class Events: NSObject, EventsJSExport {
+
+    public var events = [Int: EventHandlers]()
     
     public func on(_ obj: AnyObject , _ event: String, _ handler: JSValue) {
         let key = ObjectIdentifier(obj).hashValue
         
-        var classHandlers = events[key] ?? EventHandler()
+        var classHandlers = events[key] ?? EventHandlers()
         var eventHandlers = classHandlers[event] ?? [JSValue]()
         
         eventHandlers.append(handler)
@@ -32,3 +32,5 @@ public typealias EventHandler = [String: [JSValue]]
         }
     }
 }
+
+/// NOTE! JSManagedValues are a thing
